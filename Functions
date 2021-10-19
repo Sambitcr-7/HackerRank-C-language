@@ -1,0 +1,580 @@
+*******************Calculate the Nth term*************************
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+//Complete the following function.
+
+int find_nth_term(int n, int a, int b, int c) {
+  //Write your code here.
+  if(n==1)return a;
+  if(n==2)return b;
+  if(n==3)return c;
+  else return(find_nth_term(n-1,a,b,c)+find_nth_term(n-2,  a,  b,  c)+find_nth_term(n-3,a,b,c ));
+}
+
+int main() {
+    int n, a, b, c;
+  
+    scanf("%d %d %d %d", &n, &a, &b, &c);
+    int ans = find_nth_term(n, a, b, c);
+ 
+    printf("%d", ans); 
+    return 0;
+}
+******************Students Marks Sum********************
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+//Complete the following function.
+
+int marks_summation(int* marks, int number_of_students, char gender) {
+  //Write your code here.
+  int sum = 0;
+  if(gender == 'b'){
+      for(int i = 0; i < number_of_students; i +=2) sum +=marks[i];
+  }else{
+      for(int i = 1; i < number_of_students; i += 2) sum +=marks[i]; 
+  }
+  return sum;
+}
+
+int main() {
+    int number_of_students;
+    char gender;
+    int sum;
+  
+    scanf("%d", &number_of_students);
+    int *marks = (int *) malloc(number_of_students * sizeof (int));
+ 
+    for (int student = 0; student < number_of_students; student++) {
+        scanf("%d", (marks + student));
+    }
+    
+    scanf(" %c", &gender);
+    sum = marks_summation(marks, number_of_students, gender);
+    printf("%d", sum);
+    free(marks);
+ 
+    return 0;
+}
+*******************Sorting Array of Strings***********************
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+int lexicographic_sort(const char* a, const char* b){
+    return strcmp(a, b);
+}
+
+int lexicographic_sort_reverse(const char* a, const char* b){
+    return strcmp(b, a);
+}
+int characters_count(const char *s){
+    int n = 0;
+    int count[128] = {0};
+    if (NULL == s){
+        return -1;
+    }
+    while(*s != '\0'){
+        if (!count[*s]){
+            count[*s]++;
+            n++;
+        }
+        s++;
+    }
+    return n;
+}
+
+int sort_by_number_of_distinct_characters(const char* a, const char* b){
+    int con = characters_count(a) - characters_count(b);
+    return (con ? con : lexicographic_sort(a, b));
+}
+
+int sort_by_length(const char* a, const char* b) {
+    int len = strlen(a) - strlen(b);
+    return (len ? len : lexicographic_sort(a, b));
+}
+
+void string_sort(char** arr,const int len,int (*cmp_func)(const char* a, const char* b)){
+    int mid = len / 2;
+    int con = 0;
+    while(!con){
+        con = 1;
+        for(int i = 0; i < len - 1; i++){
+            if(cmp_func(arr[i], arr[i + 1]) > 0) {
+                char *temp = arr[i];
+                arr[i] = arr[i + 1];
+                arr[i + 1] = temp;
+                con = 0;
+            }
+        }
+    }
+}
+
+
+
+
+int main() 
+{
+    int n;
+    scanf("%d", &n);
+  
+    char** arr;
+	arr = (char**)malloc(n * sizeof(char*));
+  
+    for(int i = 0; i < n; i++){
+        *(arr + i) = malloc(1024 * sizeof(char));
+        scanf("%s", *(arr + i));
+        *(arr + i) = realloc(*(arr + i), strlen(*(arr + i)) + 1);
+    }
+  
+    string_sort(arr, n, lexicographic_sort);
+    for(int i = 0; i < n; i++)
+        printf("%s\n", arr[i]);
+    printf("\n");
+
+    string_sort(arr, n, lexicographic_sort_reverse);
+    for(int i = 0; i < n; i++)
+        printf("%s\n", arr[i]); 
+    printf("\n");
+
+    string_sort(arr, n, sort_by_length);
+    for(int i = 0; i < n; i++)
+        printf("%s\n", arr[i]);    
+    printf("\n");
+
+    string_sort(arr, n, sort_by_number_of_distinct_characters);
+    for(int i = 0; i < n; i++)
+        printf("%s\n", arr[i]); 
+    printf("\n");
+}
+*****************************Permutations of Strings******************************
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int next_permutation(int n, char **s)
+{
+  // This is a standard algorithm to generate permutations of a sequence in
+  // lexicographic order
+  // Use this to understand how the algorithm works     https://en.wikipedia.org/wiki/Permutation#Generation_in_lexicographic_order
+
+  int k, l;
+  // 1. find the largest index k such that s[k] < s[k+1]
+  for (k = n - 2; k >= 0; k --) {
+    if(strcmp(s[k], s[k+1]) < 0) break;
+  }
+  if (k < 0) return 0;
+
+  // 2. find the largest index l greater than k such that s[k] < s[l]
+  for (l = n -1; l > k; l --) {
+    if(strcmp(s[k], s[l]) < 0) break;
+  }
+
+  // 3. swap elements present at k, l
+  char * tmp = s[k];
+  s[k] = s[l];
+  s[l] = tmp;
+
+  // 4. reverse the sequence of elements from k+1 to n
+  for(int i = k + 1, j = n -1; i < j; i ++, j --) {
+    tmp = s[i];
+    s[i] = s[j];
+    s[j] = tmp;
+  }
+  return 1;
+}
+
+int main()
+{
+	char **s;
+	int n;
+	scanf("%d", &n);
+	s = calloc(n, sizeof(char*));
+	for (int i = 0; i < n; i++)
+	{
+		s[i] = calloc(11, sizeof(char));
+		scanf("%s", s[i]);
+	}
+	do
+	{
+		for (int i = 0; i < n; i++)
+			printf("%s%c", s[i], i == n - 1 ? '\n' : ' ');
+	} while (next_permutation(n, s));
+	for (int i = 0; i < n; i++)
+		free(s[i]);
+	free(s);
+	return 0;
+}
+***********************Variadic functions in c **************************
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define MIN_ELEMENT 1
+#define MAX_ELEMENT 1000000
+int  sum (int count,...) {
+    int sum = 0;
+    
+    // define a pointer to variable list
+    va_list ptr;
+    // start the pointer to the list
+    va_start(ptr, count);
+    // access the argument pointed to in the list and increment position
+    for (int i = 0; i < count; i++){
+        sum += va_arg(ptr, int);
+        
+    }
+    va_end(ptr);
+    return sum;
+    
+
+}
+
+int min(int count,...) {
+    va_list ptr;
+    va_start(ptr, count);
+    
+    int min = va_arg(ptr, int);
+    int tmp;
+    for(int i = 1; i < count; i++){
+        if((tmp = va_arg(ptr, int)) < min){
+            min = tmp;
+        }
+    }
+    va_end(ptr);
+    return min;
+
+}
+
+int max(int count,...) {
+    va_list ptr;
+    va_start(ptr, count);
+    
+    int max = va_arg(ptr,int);
+    int tmp;
+    for(int i = 1; i < count; i++){
+        if((tmp = va_arg(ptr, int)) > max){
+            max = tmp;
+        }
+    }
+    va_end(ptr);
+    return max;
+
+}
+
+int test_implementations_by_sending_three_elements() {
+    srand(time(NULL));
+    
+    int elements[3];
+    
+    elements[0] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    elements[1] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    elements[2] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    
+    fprintf(stderr, "Sending following three elements:\n");
+    for (int i = 0; i < 3; i++) {
+        fprintf(stderr, "%d\n", elements[i]);
+    }
+    
+    int elements_sum = sum(3, elements[0], elements[1], elements[2]);
+    int minimum_element = min(3, elements[0], elements[1], elements[2]);
+    int maximum_element = max(3, elements[0], elements[1], elements[2]);
+
+    fprintf(stderr, "Your output is:\n");
+    fprintf(stderr, "Elements sum is %d\n", elements_sum);
+    fprintf(stderr, "Minimum element is %d\n", minimum_element);
+    fprintf(stderr, "Maximum element is %d\n\n", maximum_element);
+    
+    int expected_elements_sum = 0;
+    for (int i = 0; i < 3; i++) {
+        if (elements[i] < minimum_element) {
+            return 0;
+        }
+        
+        if (elements[i] > maximum_element) {
+            return 0;
+        }
+        
+        expected_elements_sum += elements[i];
+    }
+    
+    return elements_sum == expected_elements_sum;
+}
+
+int test_implementations_by_sending_five_elements() {
+    srand(time(NULL));
+    
+    int elements[5];
+    
+    elements[0] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    elements[1] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    elements[2] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    elements[3] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    elements[4] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    
+    fprintf(stderr, "Sending following five elements:\n");
+    for (int i = 0; i < 5; i++) {
+        fprintf(stderr, "%d\n", elements[i]);
+    }
+    
+    int elements_sum = sum(5, elements[0], elements[1], elements[2], elements[3], elements[4]);
+    int minimum_element = min(5, elements[0], elements[1], elements[2], elements[3], elements[4]);
+    int maximum_element = max(5, elements[0], elements[1], elements[2], elements[3], elements[4]);
+    
+    fprintf(stderr, "Your output is:\n");
+    fprintf(stderr, "Elements sum is %d\n", elements_sum);
+    fprintf(stderr, "Minimum element is %d\n", minimum_element);
+    fprintf(stderr, "Maximum element is %d\n\n", maximum_element);
+    
+    int expected_elements_sum = 0;
+    for (int i = 0; i < 5; i++) {
+        if (elements[i] < minimum_element) {
+            return 0;
+        }
+        
+        if (elements[i] > maximum_element) {
+            return 0;
+        }
+        
+        expected_elements_sum += elements[i];
+    }
+    
+    return elements_sum == expected_elements_sum;
+}
+
+int test_implementations_by_sending_ten_elements() {
+    srand(time(NULL));
+    
+    int elements[10];
+    
+    elements[0] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    elements[1] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    elements[2] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    elements[3] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    elements[4] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    elements[5] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    elements[6] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    elements[7] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    elements[8] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    elements[9] = rand() % (MAX_ELEMENT - MIN_ELEMENT + 1) + MIN_ELEMENT;
+    
+    fprintf(stderr, "Sending following ten elements:\n");
+    for (int i = 0; i < 10; i++) {
+        fprintf(stderr, "%d\n", elements[i]);
+    }
+    
+    int elements_sum = sum(10, elements[0], elements[1], elements[2], elements[3], elements[4],
+                           elements[5], elements[6], elements[7], elements[8], elements[9]);
+    int minimum_element = min(10, elements[0], elements[1], elements[2], elements[3], elements[4],
+                           elements[5], elements[6], elements[7], elements[8], elements[9]);
+    int maximum_element = max(10, elements[0], elements[1], elements[2], elements[3], elements[4],
+                           elements[5], elements[6], elements[7], elements[8], elements[9]);
+    
+    fprintf(stderr, "Your output is:\n");
+    fprintf(stderr, "Elements sum is %d\n", elements_sum);
+    fprintf(stderr, "Minimum element is %d\n", minimum_element);
+    fprintf(stderr, "Maximum element is %d\n\n", maximum_element);
+    
+    int expected_elements_sum = 0;
+    for (int i = 0; i < 10; i++) {
+        if (elements[i] < minimum_element) {
+            return 0;
+        }
+        
+        if (elements[i] > maximum_element) {
+            return 0;
+        }
+        
+        expected_elements_sum += elements[i];
+    }
+    
+    return elements_sum == expected_elements_sum;
+}
+
+int main ()
+{
+    int number_of_test_cases;
+    scanf("%d", &number_of_test_cases);
+    
+    while (number_of_test_cases--) {
+        if (test_implementations_by_sending_three_elements()) {
+            printf("Correct Answer\n");
+        } else {
+            printf("Wrong Answer\n");
+        }
+        
+        if (test_implementations_by_sending_five_elements()) {
+            printf("Correct Answer\n");
+        } else {
+            printf("Wrong Answer\n");
+        }
+        
+        if (test_implementations_by_sending_ten_elements()) {
+            printf("Correct Answer\n");
+        } else {
+            printf("Wrong Answer\n");
+        }
+    }
+    
+    return 0;
+}
+****************************************Querying the Document********************************
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include<assert.h>
+#define MAX_CHARACTERS 1005
+#define MAX_PARAGRAPHS 5
+char* kth_word_in_mth_sentence_of_nth_paragraph(char**** document, int k, int m, int n) {
+    return document[n - 1][m - 1][k - 1];
+}
+
+char** kth_sentence_in_mth_paragraph(char**** document, int k, int m) {
+    return document[m - 1][k - 1];
+}
+
+char*** kth_paragraph(char**** document, int k) {
+    return document[k - 1];
+}
+
+char**** get_document(char* text) {
+    // doc points to an array of paragraphs
+    char ****doc = malloc(MAX_PARAGRAPHS * sizeof(char ***)); 
+
+    // for each paragraph, assign an array of 1 sentence, we can reallocate later
+    for(int i = 0; i < MAX_PARAGRAPHS; i ++) {
+        doc[i] = malloc(1 * sizeof(char **));
+    }
+
+    // for each sentence assign an array of 1 word
+    for(int i = 0; i < MAX_PARAGRAPHS; i ++) {
+        for(int j = 0; j < 1; j ++) {
+            doc[i][j] = malloc(1 * sizeof(char*));
+        }
+    }
+
+    // for each word assign an array of 1 character
+    for(int i = 0; i < MAX_PARAGRAPHS; i ++) {
+        for(int j = 0; j < 1; j ++) {
+            for(int k = 0; k < 1; k ++) {
+                doc[i][j][k] = malloc(1 * sizeof(char));
+            }
+        }
+    }
+     
+    for(int n = 0, i = 0, j = 0, k = 0, l = 0; n < strlen(text); n ++) {
+        if(text[n] != ' ' && text[n] != '\n' && text[n] != '.') {
+            doc[i][j][k][l] = text[n];
+            l++;
+            doc[i][j][k] = realloc(doc[i][j][k], (l + 1) * sizeof(char));
+        } else if(text[n] == ' ') {
+            doc[i][j][k][l] = '\0';
+            l = 0;
+            k++;
+            doc[i][j] = realloc(doc[i][j], (k + 1) * sizeof(char*));
+            doc[i][j][k] = malloc(sizeof(char));
+            continue;
+        } else if(text[n] == '.') {
+            doc[i][j][k][l] = '\0';
+            k = l = 0;
+            j++;
+            doc[i] = realloc(doc[i], (j+1) * sizeof(char**));
+            doc[i][j] = malloc(sizeof(char*));
+            doc[i][j][k] = malloc(sizeof(char));
+            continue;
+        } else if(text[n] == '\n') {
+            j = k = l = 0;
+            i++;
+            continue;
+        }
+    }
+    return doc;
+}
+
+
+
+
+
+
+
+char* get_input_text() {	
+    int paragraph_count;
+    scanf("%d", &paragraph_count);
+
+    char p[MAX_PARAGRAPHS][MAX_CHARACTERS], doc[MAX_CHARACTERS];
+    memset(doc, 0, sizeof(doc));
+    getchar();
+    for (int i = 0; i < paragraph_count; i++) {
+        scanf("%[^\n]%*c", p[i]);
+        strcat(doc, p[i]);
+        if (i != paragraph_count - 1)
+            strcat(doc, "\n");
+    }
+
+    char* returnDoc = (char*)malloc((strlen (doc)+1) * (sizeof(char)));
+    strcpy(returnDoc, doc);
+    return returnDoc;
+}
+
+void print_word(char* word) {
+    printf("%s", word);
+}
+
+void print_sentence(char** sentence) {
+    int word_count;
+    scanf("%d", &word_count);
+    for(int i = 0; i < word_count; i++){
+        printf("%s", sentence[i]);
+        if( i != word_count - 1)
+            printf(" ");
+    }
+} 
+
+void print_paragraph(char*** paragraph) {
+    int sentence_count;
+    scanf("%d", &sentence_count);
+    for (int i = 0; i < sentence_count; i++) {
+        print_sentence(*(paragraph + i));
+        printf(".");
+    }
+}
+
+int main() 
+{
+    char* text = get_input_text();
+    char**** document = get_document(text);
+
+    int q;
+    scanf("%d", &q);
+
+    while (q--) {
+        int type;
+        scanf("%d", &type);
+
+        if (type == 3){
+            int k, m, n;
+            scanf("%d %d %d", &k, &m, &n);
+            char* word = kth_word_in_mth_sentence_of_nth_paragraph(document, k, m, n);
+            print_word(word);
+        }
+
+        else if (type == 2){
+            int k, m;
+            scanf("%d %d", &k, &m);
+            char** sentence = kth_sentence_in_mth_paragraph(document, k, m);
+            print_sentence(sentence);
+        }
+
+        else{
+            int k;
+            scanf("%d", &k);
+            char*** paragraph = kth_paragraph(document, k);
+            print_paragraph(paragraph);
+        }
+        printf("\n");
+    }     
+}
