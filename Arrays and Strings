@@ -1,0 +1,167 @@
+**********************1D Arrays in c *******************
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+int main() {
+
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */    
+    int n, sum = 0;
+    scanf("%d", &n);
+    int * arr = (int *)malloc(n* sizeof(int));
+    for(int i = 0; i < n; i++){
+        scanf("%d",arr+i);
+        sum += arr[i];
+    }
+    printf("%d",sum);
+    return 0;
+}
+******************Arrays Reversal****************
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+    int num, *arr, i;
+    scanf("%d", &num);
+    arr = (int*) malloc(num * sizeof(int));
+    for(i = 0; i < num; i++) {
+        scanf("%d", arr + i);
+    }
+    
+    for(int i = 0, j = num -1; i <= j; i++, j--){
+        int t = arr[i];
+        arr[i] = arr[j];
+        arr[j] = t;
+    }
+
+
+    /* Write the logic to reverse the array. */
+
+    for(i = 0; i < num; i++)
+        printf("%d ", *(arr + i));
+    return 0;
+}
+****************Printing Tokens*****************
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+int main() {
+
+     char *s;
+    s = malloc(1024 * sizeof(char));
+    scanf("%[^\n]", s);
+    s = realloc(s, strlen(s) + 1);
+    for(int i = 0; i < strlen(s); i ++) {
+        if(s[i] == ' ') s[i] = '\n';
+    }
+    printf("%s",s);
+    free(s);
+    return 0;
+}
+********************Digits Frequency******************
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+int main() {
+
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */   
+    char s[1000];
+    int arr[10] = {0};
+    scanf("%s",s);
+    
+    for(int i = 0; i < strlen(s); i ++) {
+        int j = s[i] - 48;
+        if( j >= 0 && j <= 9 ) {
+            arr[j]++;
+        }
+    }
+    
+    for(int i = 0; i < 10; i ++) {
+        printf("%d ", arr[i]);
+    }
+    return 0;
+}
+*******************Dynamic Array in c ************************
+#include <stdio.h>
+#include <stdlib.h>
+
+/*
+ * This stores the total number of books in each shelf.
+ */
+int* total_number_of_books;
+
+/*
+ * This stores the total number of pages in each book of each shelf.
+ * The rows represent the shelves and the columns represent the books.
+ */
+int** total_number_of_pages;
+
+int main()
+{
+    int total_number_of_shelves;
+    scanf("%d", &total_number_of_shelves);
+    
+    int total_number_of_queries;
+    scanf("%d", &total_number_of_queries);
+    
+    total_number_of_pages = (int **)malloc(total_number_of_shelves * sizeof(int*));
+    
+    total_number_of_books = (int *) malloc(total_number_of_shelves * sizeof(int));
+    
+    for(int i = 0; i < total_number_of_shelves; i ++){
+        total_number_of_books[i] = 0;
+    }
+    
+    while (total_number_of_queries--) {
+        int type_of_query;
+        scanf("%d", &type_of_query);
+        
+        if (type_of_query == 1) {
+            /*
+             * Process the query of first type here.
+             */
+            int x, y;
+            scanf("%d %d", &x, &y);
+            if(*(total_number_of_pages + x)){
+                *(total_number_of_pages + x) = (int *)realloc(*(total_number_of_pages + x),(total_number_of_books[x] + 1) * sizeof(int));
+                total_number_of_pages[x][total_number_of_books[x]] = y;
+            }
+            else{
+                *(total_number_of_pages + x) = (int *)malloc(sizeof(int));
+                **(total_number_of_pages + x) = y;
+            }
+            total_number_of_books[x]++;
+
+        } else if (type_of_query == 2) {
+            int x, y;
+            scanf("%d %d", &x, &y);
+            printf("%d\n", *(*(total_number_of_pages + x) + y));
+        } else {
+            int x;
+            scanf("%d", &x);
+            printf("%d\n", *(total_number_of_books + x));
+        }
+    }
+
+    if (total_number_of_books) {
+        free(total_number_of_books);
+    }
+    
+    for (int i = 0; i < total_number_of_shelves; i++) {
+        if (*(total_number_of_pages + i)) {
+            free(*(total_number_of_pages + i));
+        }
+    }
+    
+    if (total_number_of_pages) {
+        free(total_number_of_pages);
+    }
+    
+    return 0;
+}
